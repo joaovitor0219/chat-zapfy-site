@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-main',
   imports: [RouterOutlet],
+  templateUrl: './main.component.html',
   standalone: true,
-  template: `<router-outlet></router-outlet>`
 })
-export class AppComponent {
-  title = 'chatzapfy';
+export class MainComponent {
+
 }
