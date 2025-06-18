@@ -1,0 +1,29 @@
+<div class="chat-container">
+  <div class="chat-header">
+    Chat em Tempo Real
+  </div>
+
+  <div class="chat-mensagens">
+    <!-- @for (message of messages(); track $index) {
+    <div class="message" [class.user-message]="message.isUser" [class.other-message]="!message.isUser">
+      <div class="message-content">
+        {{ message.content }}
+        <div class="message-info">
+          {{ message.sender }} - {{ message.time }}
+        </div>
+      </div>
+    </div>
+    } -->
+
+    <!-- @if (isTyping) {
+    <div class="typing-indicator">
+      {{ typingUser }} está digitando...
+    </div>
+    } -->
+  </div>
+
+  <div class="chat-input">
+    <input type="text" placeholder="Digite sua mensagem...">
+    <button>Enviar</button>
+  </div>
+</div>
