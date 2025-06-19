@@ -20,7 +20,7 @@ export class MensagensService {
   }
 
   recuperarMensagemPorId(codigo: number): Observable<MensagemResponse> {
-    return this.http.get<MensagemResponse>(this.urlApi + "api/coberturas" + codigo);
+    return this.http.get<MensagemResponse>(this.urlApi + codigo);
   }
 
   inserir(request: MensagemRequest): Observable<MensagemResponse> {

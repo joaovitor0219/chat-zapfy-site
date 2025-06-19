@@ -22,7 +22,7 @@ export class ConversasUsuariosService {
   }
 
   recuperarConversaUsuarioPorId(codigo: number): Observable<ConversaUsuarioResponse> {
-    return this.http.get<ConversaUsuarioResponse>(this.urlApi + "api/coberturas" + codigo);
+    return this.http.get<ConversaUsuarioResponse>(this.urlApi + codigo);
   }
 
   inserir(request: ConversaUsuarioRequest): Observable<ConversaUsuarioResponse> {

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MensagemListarRequest } from '../models/requests/mensagem-listagem.request';
 import { ConversasService } from '../../conversas/services/conversas.service';
 import { MensagemResponse } from '../models/responses/mensagem.response';
@@ -11,16 +11,17 @@ import { MENSAGEM_FORM_CONFIG } from '../formularios/mensagem.form';
 import { UsuariosService } from '../../usuarios/service/usuarios.service';
 import { UsuarioResponse } from '../../usuarios/models/responses/usuario.response';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-mensagens',
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, ReactiveFormsModule],
   templateUrl: './mensagens.component.html',
   styleUrl: './mensagens.component.scss',
   standalone: true
 })
-export class MensagensComponent implements OnInit {
+export class MensagensComponent implements OnInit, OnDestroy {
 
   public request!: MensagemListarRequest;
   public response!: PaginacaoResponse<MensagemResponse>;
@@ -28,31 +29,51 @@ export class MensagensComponent implements OnInit {
   public mensagemForm!: FormGroup;
   public usuarioResponse!: UsuarioResponse;
 
-  @Input() idUsuarioLogado!: number;
-  @Input() idConversa!: number;
+  public idUsuarioLogado!: number;
+  public idConversa!: number;
 
   constructor(private mensagensService: MensagensService,
     private builder: FormBuilder,
-    private usuariosService: UsuariosService) { }
+    private usuariosService: UsuariosService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.iniciarFormulario();
     this.request = new MensagemListarRequest({});
-    this.listarMensagens();
-    this.iniciarSignalr();
+    this.recuperarDadosRota();
   }
+
+  ngOnDestroy(): void {
+    if (this.connection) {
+      this.connection.stop();
+    }
+  }
+
 
   iniciarFormulario() {
     this.mensagemForm = this.builder.group(MENSAGEM_FORM_CONFIG);
   }
 
+  recuperarDadosRota(): void {
+    const state = this.router.getCurrentNavigation()?.extras.state || history.state;
+
+    this.idUsuarioLogado = state?.idUsuario ?? +sessionStorage.getItem('idUsuario')!;
+    this.idConversa = state?.idConversa ?? +sessionStorage.getItem('idConversa')!;
+
+    if (!this.idUsuarioLogado || !this.idConversa) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.listarMensagens();
+    this.iniciarSignalr();
+  }
+
 
   listarMensagens(): void {
 
-    var request = new MensagemListarRequest({
-      IdConversa: this.idConversa,
-    })
-    this.mensagensService.listarMensagens(request).subscribe({
+    this.request.IdConversa = this.idConversa;
+    this.mensagensService.listarMensagens(this.request).subscribe({
       next: (response) => {
         this.response = response;
       },
@@ -62,11 +83,21 @@ export class MensagensComponent implements OnInit {
 
   iniciarSignalr(): void {
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5128/api/chatHub')
+      .withUrl('http://localhost:5128/api/chatHub', {
+        withCredentials: true
+      })
       .withAutomaticReconnect()
       .build();
 
     this.connection.on('ReceberMensagem', (idUsuario: number, usuario: string, mensagem: string) => {
+
+      if (!this.response?.Registros) {
+        this.response = {
+          Total: 0,
+          Registros: []
+        };
+      }
+
       this.response.Registros = [
         ...this.response.Registros,
         {
@@ -82,7 +113,7 @@ export class MensagensComponent implements OnInit {
   }
 
   async enviarMensagem(): Promise<void> {
-    const conteudo = this.mensagemForm.get('conteudo')?.value;
+    const conteudo = this.mensagemForm.get('Conteudo')?.value;
 
     if (conteudo?.trim()) {
       try {
@@ -90,7 +121,7 @@ export class MensagensComponent implements OnInit {
 
         await this.connection.invoke('EnviarMensagem', usuario.Id, usuario.Nome, conteudo);
 
-        this.mensagemForm.get('conteudo')?.setValue('');
+        this.mensagemForm.get('Conteudo')?.setValue('');
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
       }
@@ -99,6 +130,10 @@ export class MensagensComponent implements OnInit {
 
   private async recuperarUsuarioPorId(id: number): Promise<UsuarioResponse> {
     return await firstValueFrom(this.usuariosService.recuperarUsuarioPorId(id));
+  }
+
+  conteudoFormControl(): FormControl {
+    return this.mensagemForm.get('Conteudo') as FormControl;
   }
 
 

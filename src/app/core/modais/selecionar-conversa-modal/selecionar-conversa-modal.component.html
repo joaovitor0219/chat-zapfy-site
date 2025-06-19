@@ -1,11 +1,14 @@
 <div class="modal-body">
-    <h5>Selecione uma conversa</h5>
-    <select class="form-control">
-        @for (conversa of conversas; track conversa.id) {
-        <option [value]="conversa.id">{{ conversa.nome }}</option>
-        }
-    </select>
-    <div class="modal-footer">
-        <button class="btn btn-primary mt-3" (click)="confirmarConversa()">Confirmar</button>
-    </div>
+    <form [formGroup]="selecionarConversaForm" (ngSubmit)="confirmarConversa()">
+        <h5>Selecione uma conversa</h5>
+        <select class="form-control" formControlName="IdConversa">
+            @for (conversa of conversasResponse; track conversa.Id) {
+            <option [value]="conversa.Id">{{ conversa.Nome }}</option>
+            }
+        </select>
+        <div class="modal-footer">
+            <button class="btn btn-primary mt-3" [disabled]="selecionarConversaForm.invalid" type="submit">Confirmar</button>
+        </div>
+
+    </form>
 </div>

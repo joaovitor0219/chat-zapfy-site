@@ -5,6 +5,7 @@ import { PaginacaoResponse } from '../../shared/models/responses/paginacao.respo
 import { Observable } from 'rxjs';
 import { UsuarioResponse } from '../models/responses/usuario.response';
 import { UsuarioRequest } from '../models/requests/usuario.request';
+import { UsuarioLoginRequest } from '../models/requests/usuario-login.request';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,19 @@ export class UsuariosService {
   }
 
   recuperarUsuarioPorId(codigo: number): Observable<UsuarioResponse> {
-    return this.http.get<UsuarioResponse>(this.urlApi + "api/coberturas" + codigo);
+    return this.http.get<UsuarioResponse>(this.urlApi + "/" + codigo);
   }
 
   inserir(request: UsuarioRequest): Observable<UsuarioResponse> {
     return this.http.post<UsuarioResponse>(this.urlApi, request);
   }
+
+  recuperarUsuarioLogin(request: UsuarioLoginRequest): Observable<UsuarioResponse> {
+    return this.http.post<UsuarioResponse>(
+      `${this.urlApi}/autenticacoes-usuarios`,
+      request
+    );
+  }
+
 
 }

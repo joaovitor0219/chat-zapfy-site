@@ -5,7 +5,7 @@
 
   <div class="chat-mensagens">
     @for (mensagem of response?.Registros; track $index) {
-    <div class="message" [ngClass]="mensagem.Usuario?.Id == usuarioLogado ? 'user-message' : 'other-message'">
+    <div class="message" [ngClass]="mensagem.Usuario?.Id == idUsuarioLogado ? 'user-message' : 'other-message'">
       <div class="message-content">
         {{ mensagem.Conteudo }}
         <div class="message-info">
@@ -17,7 +17,7 @@
   </div>
 
   <div class="chat-input">
-    <input type="text" [formControl]="novaMensagemControl" placeholder="Digite sua mensagem..." />
+    <input type="text" [formControl]="conteudoFormControl()" placeholder="Digite sua mensagem..." />
     <button (click)="enviarMensagem()">Enviar</button>
   </div>
 </div>

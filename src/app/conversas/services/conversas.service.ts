@@ -5,25 +5,26 @@ import { ConversasListarRequest } from '../models/requests/conversas-listagem.re
 import { PaginacaoResponse } from '../../shared/models/responses/paginacao.response';
 import { ConversaResponse } from '../models/responses/conversas.response';
 import { ConversaRequest } from '../models/requests/conversas.request';
+import { ConversaPorUsuarioListarRequest } from '../models/requests/conversas-usuarios.request';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class ConversasService {
 
-  private readonly urlApi = "http://localhost:5128/api/conversas"
+	private readonly urlApi = "http://localhost:5128/api/conversas"
 
-  constructor(private http:HttpClient) { }
+	constructor(private http: HttpClient) { }
 
-  public listarConversas(request: ConversasListarRequest) : Observable<PaginacaoResponse<ConversaResponse>>{
-    return this.http.get<PaginacaoResponse<ConversaResponse>>(this.urlApi, { params: <any>request });
-  }
-
-  recuperarConversaPorId(codigo: number): Observable<ConversaResponse> {
-		return this.http.get<ConversaResponse>(this.urlApi + "api/coberturas" + codigo);
+	public listarConversas(request: ConversasListarRequest): Observable<PaginacaoResponse<ConversaResponse>> {
+		return this.http.get<PaginacaoResponse<ConversaResponse>>(this.urlApi, { params: <any>request });
 	}
 
-  inserir(request: ConversaRequest): Observable<ConversaResponse> {
+	recuperarConversaPorId(codigo: number): Observable<ConversaResponse> {
+		return this.http.get<ConversaResponse>(this.urlApi + codigo);
+	}
+
+	inserir(request: ConversaRequest): Observable<ConversaResponse> {
 		return this.http.post<ConversaResponse>(this.urlApi, request);
 	}
 
@@ -34,8 +35,12 @@ export class ConversasService {
 		);
 	}
 
-  excluir(id: number): Observable<void> {
+	excluir(id: number): Observable<void> {
 		return this.http.delete<void>(this.urlApi + "/" + id);
+	}
+
+	public listarConversasPorUsuario(request: ConversaPorUsuarioListarRequest): Observable<ConversaResponse[]> {
+		return this.http.get<ConversaResponse[]>(this.urlApi + "/conversas-usuarios", { params: <any>request });
 	}
 
 }

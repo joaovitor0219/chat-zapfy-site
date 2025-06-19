@@ -9,6 +9,9 @@ import { CommonModule } from '@angular/common';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { SelecionarConversaModalComponent } from '../../modais/selecionar-conversa-modal/selecionar-conversa-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UsuariosService } from '../../../usuarios/service/usuarios.service';
+import { UsuarioResponse } from '../../../usuarios/models/responses/usuario.response';
+import { UsuarioLoginRequest } from '../../../usuarios/models/requests/usuario-login.request';
 
 @Component({
   selector: 'app-login',
@@ -29,6 +32,8 @@ export class LoginComponent implements OnInit {
   public listarConversaRequest!: ConversasListarRequest;
   public conversasResponse!: PaginacaoResponse<ConversaResponse>;
   public modalRef!: BsModalRef;
+  public usuarioResponse!: UsuarioResponse;
+  public usuarioLoginRequest!: UsuarioLoginRequest;
 
   conversaSelecionada: string | null = null;
 
@@ -41,7 +46,8 @@ export class LoginComponent implements OnInit {
 
   constructor(private builder: FormBuilder,
     private conversasService: ConversasService,
-    private modalService: BsModalService) { 
+    private modalService: BsModalService,
+    private usuariosService: UsuariosService) { 
 
     }
 
@@ -67,6 +73,24 @@ export class LoginComponent implements OnInit {
       },
       error: () => { }
     });
+  }
+
+  recuperarUsuarioLogin(): void{
+    const nome = this.loginForm.get('Nome')?.value;
+    const senha = this.loginForm.get('Senha')?.value;
+
+    const request = new UsuarioLoginRequest({
+      Nome: nome,
+      Senha: senha
+    });
+
+    this.usuariosService.recuperarUsuarioLogin(request).subscribe({
+      next: (response) => {
+        this.usuarioResponse = response;
+      },
+      error: () => {}
+    });
+
   }
 
   abrirModalSelecionarConversa(): void {
