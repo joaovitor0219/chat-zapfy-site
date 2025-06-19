@@ -9,7 +9,11 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'inicio'
+        redirectTo: 'login'
+      },
+      {
+        path: 'login',
+        loadComponent: () => import('./core/paginas/login/login.component').then(m => m.LoginComponent)
       },
       {
         path: 'inicio',
