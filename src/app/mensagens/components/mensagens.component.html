@@ -4,26 +4,20 @@
   </div>
 
   <div class="chat-mensagens">
-    <!-- @for (message of messages(); track $index) {
-    <div class="message" [class.user-message]="message.isUser" [class.other-message]="!message.isUser">
+    @for (mensagem of response?.Registros; track $index) {
+    <div class="message" [ngClass]="mensagem.Usuario?.Id == usuarioLogado ? 'user-message' : 'other-message'">
       <div class="message-content">
-        {{ message.content }}
+        {{ mensagem.Conteudo }}
         <div class="message-info">
-          {{ message.sender }} - {{ message.time }}
+          {{ mensagem.Usuario?.Nome }}
         </div>
       </div>
     </div>
-    } -->
-
-    <!-- @if (isTyping) {
-    <div class="typing-indicator">
-      {{ typingUser }} está digitando...
-    </div>
-    } -->
+    }
   </div>
 
   <div class="chat-input">
-    <input type="text" placeholder="Digite sua mensagem...">
-    <button>Enviar</button>
+    <input type="text" [formControl]="novaMensagemControl" placeholder="Digite sua mensagem..." />
+    <button (click)="enviarMensagem()">Enviar</button>
   </div>
 </div>

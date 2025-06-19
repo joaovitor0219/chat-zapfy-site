@@ -29,8 +29,6 @@ export class LoginComponent implements OnInit {
   public listarConversaRequest!: ConversasListarRequest;
   public conversasResponse!: PaginacaoResponse<ConversaResponse>;
   public modalRef!: BsModalRef;
-  renderer: Renderer2;
-
 
   conversaSelecionada: string | null = null;
 
@@ -43,9 +41,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private builder: FormBuilder,
     private conversasService: ConversasService,
-    private modalService: BsModalService,
-    private rendererFactory: RendererFactory2) { 
-      this.renderer = rendererFactory.createRenderer(null, null);
+    private modalService: BsModalService) { 
 
     }
 
@@ -68,7 +64,6 @@ export class LoginComponent implements OnInit {
     this.conversasService.listarConversas(this.listarConversaRequest).subscribe({
       next: (response) => {
         this.conversasResponse = response;
-        console.log("conversas: ",this.conversasResponse);
       },
       error: () => { }
     });
