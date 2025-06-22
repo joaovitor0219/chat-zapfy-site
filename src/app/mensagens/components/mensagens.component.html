@@ -3,7 +3,7 @@
     Chat em Tempo Real
   </div>
 
-  <div class="chat-mensagens">
+  <div class="chat-mensagens" #scrollContainer>
     @for (mensagem of response?.Registros; track $index) {
     <div class="message" [ngClass]="mensagem.Usuario?.Id == idUsuarioLogado ? 'user-message' : 'other-message'">
       <div class="message-content">

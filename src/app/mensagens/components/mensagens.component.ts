@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MensagemListarRequest } from '../models/requests/mensagem-listagem.request';
 import { ConversasService } from '../../conversas/services/conversas.service';
@@ -22,7 +22,7 @@ import { MensagemRequest } from '../models/requests/mensagem-request';
   styleUrl: './mensagens.component.scss',
   standalone: true
 })
-export class MensagensComponent implements OnInit, OnDestroy {
+export class MensagensComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public request!: MensagemListarRequest;
   public response!: PaginacaoResponse<MensagemResponse>;
@@ -32,11 +32,18 @@ export class MensagensComponent implements OnInit, OnDestroy {
 
   public idUsuarioLogado!: number;
   public idConversa!: number;
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
 
   constructor(private mensagensService: MensagensService,
     private builder: FormBuilder,
     private usuariosService: UsuariosService,
     private router: Router) { }
+
+
+  ngAfterViewInit(): void {
+    this.visualizarMensagemMaisRecente();
+  }
 
   ngOnInit(): void {
     this.iniciarFormulario();
@@ -72,11 +79,12 @@ export class MensagensComponent implements OnInit, OnDestroy {
 
 
   listarMensagens(): void {
-
     this.request.IdConversa = this.idConversa;
+    this.request.Qt = 100;
     this.mensagensService.listarMensagens(this.request).subscribe({
       next: (response) => {
         this.response = response;
+        setTimeout(() => this.visualizarMensagemMaisRecente(),0)
       },
       error: () => { }
     });
@@ -106,6 +114,7 @@ export class MensagensComponent implements OnInit, OnDestroy {
           Usuario: { Id: idUsuario, Nome: usuario }
         }
       ];
+      setTimeout(() => this.visualizarMensagemMaisRecente(),0)
     });
 
     this.connection.start().then(() => console.log('Conectado ao Signalr')
@@ -135,7 +144,7 @@ export class MensagensComponent implements OnInit, OnDestroy {
     return await firstValueFrom(this.usuariosService.recuperarUsuarioPorId(id));
   }
 
-  private publicarMensagemNaFilaAws(idUsuario: number, conteudo: string,): void{
+  private publicarMensagemNaFilaAws(idUsuario: number, conteudo: string,): void {
     const request = new MensagemRequest({
       IdUsuario: idUsuario,
       Conteudo: conteudo,
@@ -143,8 +152,8 @@ export class MensagensComponent implements OnInit, OnDestroy {
     });
 
     this.mensagensService.publicarMensagemAws(request).subscribe({
-      next: () => {},
-      error: () => {}
+      next: () => { },
+      error: () => { }
     });
   }
 
@@ -152,6 +161,13 @@ export class MensagensComponent implements OnInit, OnDestroy {
     return this.mensagemForm.get('Conteudo') as FormControl;
   }
 
+  private visualizarMensagemMaisRecente(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.log('Erro ao descer o scroll:', err);
+    }
+  }
 
 }
 
