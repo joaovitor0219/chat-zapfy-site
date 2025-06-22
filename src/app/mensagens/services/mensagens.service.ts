@@ -5,13 +5,14 @@ import { MensagemResponse } from '../models/responses/mensagem.response';
 import { PaginacaoResponse } from '../../shared/models/responses/paginacao.response';
 import { Observable } from 'rxjs';
 import { MensagemRequest } from '../models/requests/mensagem-request';
+import { environment } from '../../../environments/enviroment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MensagensService {
 
-  private readonly urlApi = "http://localhost:5128/api/mensagens";
+    private readonly urlApi = environment.config.apis.chatzapfy + "mensagens";
 
   constructor(private http: HttpClient) { }
 

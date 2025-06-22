@@ -1,14 +1,17 @@
-<div class="modal-body">
+<div class="modal-body modal-customizado">
     <form [formGroup]="selecionarConversaForm" (ngSubmit)="confirmarConversa()">
-        <h5>Selecione uma conversa</h5>
-        <select class="form-control" formControlName="IdConversa">
+        <h5 class="modal-title mb-3 text-center">Selecione uma conversa</h5>
+
+        <select class="form-control select-customizado" formControlName="IdConversa">
             @for (conversa of conversasResponse; track conversa.Id) {
             <option [value]="conversa.Id">{{ conversa.Nome }}</option>
             }
         </select>
-        <div class="modal-footer">
-            <button class="btn btn-primary mt-3" [disabled]="selecionarConversaForm.invalid" type="submit">Confirmar</button>
-        </div>
 
+        <div class="d-flex justify-content-end mt-4">
+            <button class="btn botao-customizado" [disabled]="selecionarConversaForm.invalid" type="submit">
+                Confirmar
+            </button>
+        </div>
     </form>
 </div>

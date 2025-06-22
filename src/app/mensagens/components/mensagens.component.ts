@@ -10,8 +10,9 @@ import * as signalR from '@microsoft/signalr';
 import { MENSAGEM_FORM_CONFIG } from '../formularios/mensagem.form';
 import { UsuariosService } from '../../usuarios/service/usuarios.service';
 import { UsuarioResponse } from '../../usuarios/models/responses/usuario.response';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { MensagemRequest } from '../models/requests/mensagem-request';
 
 
 @Component({
@@ -121,6 +122,8 @@ export class MensagensComponent implements OnInit, OnDestroy {
 
         await this.connection.invoke('EnviarMensagem', usuario.Id, usuario.Nome, conteudo);
 
+        this.publicarMensagemNaFilaAws(usuario.Id!, conteudo)
+
         this.mensagemForm.get('Conteudo')?.setValue('');
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
@@ -130,6 +133,19 @@ export class MensagensComponent implements OnInit, OnDestroy {
 
   private async recuperarUsuarioPorId(id: number): Promise<UsuarioResponse> {
     return await firstValueFrom(this.usuariosService.recuperarUsuarioPorId(id));
+  }
+
+  private publicarMensagemNaFilaAws(idUsuario: number, conteudo: string,): void{
+    const request = new MensagemRequest({
+      IdUsuario: idUsuario,
+      Conteudo: conteudo,
+      IdConversa: this.idConversa
+    });
+
+    this.mensagensService.publicarMensagemAws(request).subscribe({
+      next: () => {},
+      error: () => {}
+    });
   }
 
   conteudoFormControl(): FormControl {

@@ -1,0 +1,32 @@
+.modal-customizado {
+    padding: 24px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.select-customizado {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.botao-customizado {
+    background-color: #0d1b7e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.botao-customizado {
+    background-color: #0b1668;
+}
+
+.botao-customizado:disabled {
+    background-color: #b5b5b5;
+    cursor: not-allowed;
+}

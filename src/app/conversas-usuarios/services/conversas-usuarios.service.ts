@@ -5,13 +5,14 @@ import { ConversaUsuarioResponse } from '../models/responses/conversa-usuario.re
 import { PaginacaoResponse } from '../../shared/models/responses/paginacao.response';
 import { Observable } from 'rxjs';
 import { ConversaUsuarioRequest } from '../models/requests/conversa-usuario.request';
+import { environment } from '../../../environments/enviroment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConversasUsuariosService {
 
-  private readonly urlApi = "http://localhost:5128/api/conversas-usuarios";
+    private readonly urlApi = environment.config.apis.chatzapfy + "conversas-usuarios";
 
   constructor(private http: HttpClient) { 
 

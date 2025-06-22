@@ -6,13 +6,14 @@ import { PaginacaoResponse } from '../../shared/models/responses/paginacao.respo
 import { ConversaResponse } from '../models/responses/conversas.response';
 import { ConversaRequest } from '../models/requests/conversas.request';
 import { ConversaPorUsuarioListarRequest } from '../models/requests/conversas-usuarios.request';
+import { environment } from '../../../environments/enviroment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class ConversasService {
 
-	private readonly urlApi = "http://localhost:5128/api/conversas"
+	private readonly urlApi = environment.config.apis.chatzapfy + "conversas";
 
 	constructor(private http: HttpClient) { }
 
